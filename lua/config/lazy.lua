@@ -14,5 +14,6 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
+	{ "folke/lazy.nvim", branch = "main" },
 	{ import = "plugins" },
 })
