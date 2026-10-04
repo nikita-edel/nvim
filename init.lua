@@ -24,3 +24,5 @@ end
 
 require("config.options")
 require("config.lazy")
+require("config.my_plugins.terminal")
+require("config.my_plugins.guards")
