@@ -22,5 +22,5 @@ if vim.fn.isdirectory(undodir) == 0 then
 	vim.fn.mkdir(undodir, "p")
 end
 
--- config
-
+require("config.options")
+require("config.lazy")
