@@ -1,5 +1,7 @@
 local state = { buf = nil, win = nil }
 
+local shell = vim.fn.exepath("pwsh") ~= "" and "pwsh" or vim.fn.exepath("powershell") ~= "" and "powershell" or vim.o.shell
+
 local function win_valid(win)
 	return win and vim.api.nvim_win_is_valid(win)
 end
@@ -58,7 +60,7 @@ local function ensure_terminal(buf)
 	if vim.api.nvim_win_get_buf(cur_win) ~= buf then
 		vim.api.nvim_win_set_buf(cur_win, buf)
 	end
-	vim.cmd("terminal")
+	vim.fn.termopen(shell)
 	local term_buf = vim.api.nvim_win_get_buf(cur_win)
 	set_term_keymaps(term_buf)
 	attach_termclose(term_buf)

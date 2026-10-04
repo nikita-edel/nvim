@@ -24,5 +24,9 @@ end
 
 require("config.options")
 require("config.lazy")
+require("config.my_plugins.util")
 require("config.my_plugins.terminal")
 require("config.my_plugins.guards")
+require("config.keymap.my_plugins")
+require("config.keymap.plugins")
+require("config.keymap.vanilla")

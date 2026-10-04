@@ -9,7 +9,6 @@ return {
 				separator_style = "thin",
 			},
 		})
-		vim.keymap.set("n", "H", "<cmd>BufferLineCyclePrev<cr>")
-		vim.keymap.set("n", "L", "<cmd>BufferLineCycleNext<cr>")
+
 	end,
 }

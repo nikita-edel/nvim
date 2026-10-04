@@ -1,7 +1,6 @@
 local vim = vim
 local opt = vim.opt
 
-
 vim.o.signcolumn = "number"
 opt.number = true
 opt.relativenumber = true

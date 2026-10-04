@@ -83,33 +83,6 @@ return {
 		vim.api.nvim_create_user_command("TelS", toggle_telescope_scope, {})
 		vim.api.nvim_create_user_command("TelSi", notify_telescope_scope, {})
 	end,
-	keys = {
-		{
-			"<leader>gf",
-			function()
-				require("telescope.builtin").current_buffer_fuzzy_find({
-					sorting_strategy = "ascending",
-					layout_config = { prompt_position = "top" },
-				})
-			end,
-			mode = "n",
-			desc = "fzf in curr file",
-			silent = true,
-		},
-		{
-			"<leader>gh",
-			function()
-				require("telescope.builtin").find_files({
-					cwd = telescope_cwd(),
-					hidden = true,
-					find_command = { "rg", "--files", "--hidden", "--glob", "!.git/*" },
-				})
-			end,
-			mode = "n",
-			desc = "find filenames",
-			silent = true,
-		},
-	},
 	config = function()
 		local telescope = require("telescope")
 		telescope.setup({
