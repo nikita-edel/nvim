@@ -1,6 +1,17 @@
 local state = { buf = nil, win = nil }
 
-local shell = vim.fn.exepath("pwsh") ~= "" and "pwsh" or vim.fn.exepath("powershell") ~= "" and "powershell" or vim.o.shell
+local function pick_shell()
+	if vim.fn.has("win32") == 1 then
+		for _, exe in ipairs({ "pwsh", "powershell" }) do
+			if vim.fn.executable(exe) == 1 then
+				return { exe, "-NoLogo" }
+			end
+		end
+	end
+	return vim.o.shell
+end
+
+local shell = pick_shell()
 
 local function win_valid(win)
 	return win and vim.api.nvim_win_is_valid(win)
@@ -14,10 +25,10 @@ local function set_term_keymaps(buf)
 	local o = { buffer = buf, silent = true, noremap = true }
 	vim.keymap.set("t", "<Esc>", "<Esc>", o)
 	vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", o)
-	vim.keymap.set("t", "<C-h>", "<C-\\><C-n><C-w>h", o)
+	--[[ vim.keymap.set("t", "<C-h>", "<C-\\><C-n><C-w>h", o)
 	vim.keymap.set("t", "<C-j>", "<C-\\><C-n><C-w>j", o)
 	vim.keymap.set("t", "<C-k>", "<C-\\><C-n><C-w>k", o)
-	vim.keymap.set("t", "<C-l>", "<C-\\><C-n><C-w>l", o)
+	vim.keymap.set("t", "<C-l>", "<C-\\><C-n><C-w>l", o) ]]
 end
 
 local function attach_termclose(buf)
