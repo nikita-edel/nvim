@@ -87,3 +87,6 @@ map("n", "<leader>c", function()
 	vim.cmd("bdelete " .. cur)
 end, { desc = "Close buffer", noremap = true, silent = true })
 
+-- pdf view
+map("n", "<leader>jj", "<cmd>:lua require('pdfview.renderer').next_page()<CR>", { desc = "PDFview: Next page" })
+map("n", "<leader>kk", "<cmd>:lua require('pdfview.renderer').previous_page()<CR>", { desc = "PDFview: Previous page" })

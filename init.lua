@@ -22,8 +22,11 @@ if vim.fn.isdirectory(undodir) == 0 then
 	vim.fn.mkdir(undodir, "p")
 end
 
+-- 
+--
 require("config.options")
 require("config.lazy")
+require("config.autocmd")
 require("config.my_plugins.util")
 require("config.my_plugins.terminal")
 require("config.my_plugins.guards")
