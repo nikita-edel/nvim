@@ -5,7 +5,75 @@ map("n", "H", "<cmd>BufferLineCyclePrev<cr>", { desc = "Prev buffer", noremap = 
 map("n", "L", "<cmd>BufferLineCycleNext<cr>", { desc = "Next buffer", noremap = true, silent = true })
 
 -- oil
+
+local function oil_open_background()
+	local oil = require("oil")
+	local dir = oil.get_current_dir()
+	if not dir then return end
+	local first, last = vim.fn.line("."), vim.fn.line(".")
+	if vim.fn.mode():match("^[vV\22]") then
+		first, last = math.min(vim.fn.line("v"), last), math.max(vim.fn.line("v"), last)
+		vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
+	end
+	for lnum = first, last do
+		local entry = oil.get_entry_on_line(0, lnum)
+		if entry and entry.type ~= "directory" then
+			vim.cmd("badd " .. vim.fn.fnameescape(dir .. entry.name))
+		end
+	end
+end
+
+local oil_filter = nil
+local function oil_set_filter(pattern)
+	local view_options = require("oil.config").view_options
+	if not view_options._orig_is_always_hidden then
+		view_options._orig_is_always_hidden = view_options.is_always_hidden
+		view_options.is_always_hidden = function(name, bufnr)
+			if view_options._orig_is_always_hidden(name, bufnr) then return true end
+			return oil_filter ~= nil and name ~= ".." and not oil_filter:match_str(name)
+		end
+	end
+	if pattern == nil or pattern == "" then
+		oil_filter = nil
+	else
+		local ok, re = pcall(vim.regex, pattern:find("[*?]") and vim.fn.glob2regpat(pattern) or pattern)
+		if not ok then return vim.notify("Oil filter: invalid pattern " .. pattern, vim.log.levels.ERROR) end
+		oil_filter = re
+	end
+	require("oil.view").rerender_all_oil_buffers({ refetch = false })
+end
+
 map("n", "<leader>e", "<cmd>Oil<cr>", { desc = "Open Oil", noremap = true, silent = true })
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "oil",
+	callback = function(ev)
+		local actions = require("oil.actions")
+		local function omap(mode, lhs, rhs, desc)
+			map(mode, lhs, rhs, { buffer = ev.buf, desc = desc, noremap = true, silent = true })
+		end
+
+		omap("n", "g?", function() require("which-key").show({ global = false }) end, "Oil: Show keymaps")
+		omap("", "<CR>", actions.select.callback, "Oil: Open entry")
+		omap("", "<leader>w", actions.preview.callback, "Oil: Preview entry")
+		omap("", "<>", actions.refresh.callback, "Oil: Refresh")
+
+		omap("n", "-", actions.parent.callback, "Oil: Parent directory")
+
+		omap("n", "~", function() actions.cd.callback({ scope = "tab" }) end, "Oil: tcd to current directory")
+
+		omap("n", "q", actions.close.callback, "Oil: Close")
+
+		omap("", "<S-CR>", oil_open_background, "Oil: Open entry as buffer, stay in oil")
+
+		omap("n", "gf", function()
+			vim.ui.input({ prompt = "Oil filter (glob or regex, empty clears): " }, function(input)
+				if input then oil_set_filter(input) end
+			end)
+		end, "Oil: Filter entries")
+
+		omap("n", "gF", function() oil_set_filter(nil) end, "Oil: Clear filter")
+	end,
+})
 
 -- telescope
 local function telescope_cwd()
