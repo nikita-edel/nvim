@@ -23,5 +23,9 @@ return {
 				},
 			},
 		})
+		vim.lsp.config("powershell_es", {
+			bundle_path = vim.fn.stdpath("data") .. "/mason/packages/powershell-editor-services",
+			shell = vim.fn.executable("pwsh") == 1 and "pwsh" or "powershell.exe",
+		})
 	end,
 }
