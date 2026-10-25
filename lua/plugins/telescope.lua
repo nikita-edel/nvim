@@ -87,6 +87,14 @@ return {
 		local telescope = require("telescope")
 		telescope.setup({
 			defaults = {
+				layout_config = {
+					width = function(_, max_columns)
+						return max_columns
+					end,
+					height = function(_, _, max_lines)
+						return max_lines
+					end,
+				},
 				vimgrep_arguments = {
 					"rg",
 					"--color=never",

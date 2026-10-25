@@ -1,1 +1,1 @@
-better binds for pdfviewer
+CD into path in oil
