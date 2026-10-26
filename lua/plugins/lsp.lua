@@ -26,6 +26,8 @@ return {
 		vim.lsp.config("powershell_es", {
 			bundle_path = vim.fn.stdpath("data") .. "/mason/packages/powershell-editor-services",
 			shell = vim.fn.executable("pwsh") == 1 and "pwsh" or "powershell.exe",
+			-- rename is gated behind a disclaimer prompt; declining it disables rename for the session
+			settings = { powershell = { rename = { acceptDisclaimer = true } } },
 		})
 	end,
 }
