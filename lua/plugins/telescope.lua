@@ -85,8 +85,19 @@ return {
 	end,
 	config = function()
 		local telescope = require("telescope")
+
+		-- TEMPORARY (texel.nvim test): images/PDFs in the preview pane, Markdown
+		-- formatted as text, Typst typeset (texel's preview defaults). Falls
+		-- back to Telescope's previewer without texel.
+		local buffer_previewer_maker = require("telescope.previewers").buffer_previewer_maker
+		local has_texel, texel_telescope = pcall(require, "texel.integrations.telescope")
+		if has_texel then
+			buffer_previewer_maker = texel_telescope.buffer_previewer_maker
+		end
+
 		telescope.setup({
 			defaults = {
+				buffer_previewer_maker = buffer_previewer_maker,
 				layout_config = {
 					width = function(_, max_columns)
 						return max_columns

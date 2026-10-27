@@ -1,5 +1,6 @@
 return {
   "basola21/PDFview",
+  enabled = false, -- TEMPORARY: testing texel.nvim (lua/plugins/texel.lua)
   lazy = false,
   dependencies = { "nvim-telescope/telescope.nvim" },
   config = function()
