@@ -3,6 +3,9 @@ local map = vim.keymap.set
 -- bufferline
 map("n", "H", "<cmd>BufferLineCyclePrev<cr>", { desc = "Prev buffer", noremap = true, silent = true })
 map("n", "L", "<cmd>BufferLineCycleNext<cr>", { desc = "Next buffer", noremap = true, silent = true })
+-- Also where H and L do something else (texel documents scroll sideways).
+map("n", "<leader>H", "<cmd>BufferLineCyclePrev<cr>", { desc = "Prev buffer", noremap = true, silent = true })
+map("n", "<leader>L", "<cmd>BufferLineCycleNext<cr>", { desc = "Next buffer", noremap = true, silent = true })
 
 -- oil
 

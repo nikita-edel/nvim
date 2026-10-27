@@ -5,6 +5,13 @@ return {
 	name = "texel.nvim",
 	lazy = false,
 	config = function()
-		require("texel").setup({ keymaps = "default" })
+		require("texel").setup({
+			keymaps = "default",
+			scroll = {
+				-- Animate the mouse wheel and <C-d>/<C-u>/<C-f>/<C-b> in documents
+				-- too, not only jumps (J/K, gp, links: scroll.mode).
+				smooth = { mouse = true, keys = true },
+			},
+		})
 	end,
 }

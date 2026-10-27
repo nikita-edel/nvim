@@ -78,10 +78,25 @@ return {
 			"nvim-telescope/telescope-fzf-native.nvim",
 			build = "make",
 		},
+		-- vim.ui.select in Telescope (texel's outline and links, code actions).
+		"nvim-telescope/telescope-ui-select.nvim",
 	},
 	init = function()
 		vim.api.nvim_create_user_command("TelS", toggle_telescope_scope, {})
 		vim.api.nvim_create_user_command("TelSi", notify_telescope_scope, {})
+
+		-- Telescope loads on demand: the first vim.ui.select loads it, and
+		-- the ui-select extension then takes vim.ui.select over.
+		local builtin_select = vim.ui.select
+		local function load_then_select(...)
+			require("lazy").load({ plugins = { "telescope.nvim" } })
+			-- Not taken over (the extension failed to load): Neovim's own.
+			if vim.ui.select == load_then_select then
+				vim.ui.select = builtin_select
+			end
+			return vim.ui.select(...)
+		end
+		vim.ui.select = load_then_select
 	end,
 	config = function()
 		local telescope = require("telescope")
@@ -124,6 +139,9 @@ return {
 				},
 			},
 			extensions = {
+				["ui-select"] = {
+					require("telescope.themes").get_dropdown(),
+				},
 				fzf = {
 					fuzzy = true,
 					override_generic_sorter = true,
@@ -133,5 +151,6 @@ return {
 			},
 		})
 		pcall(telescope.load_extension, "fzf")
+		pcall(telescope.load_extension, "ui-select")
 	end,
 }
