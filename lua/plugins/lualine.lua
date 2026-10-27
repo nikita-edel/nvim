@@ -26,6 +26,8 @@ return {
 			},
 			sections = {
 				lualine_c = { git_project_name },
+				-- TEMPORARY (texel.nvim test): the page in documents, then lualine's defaults.
+				lualine_x = { "texel", "encoding", "fileformat", "filetype" },
 			},
 		})
 	end,
