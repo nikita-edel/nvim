@@ -2,10 +2,15 @@ local state = { buf = nil, win = nil }
 
 local function pick_shell()
 	if vim.fn.has("win32") == 1 then
-		for _, exe in ipairs({ "pwsh", "powershell" }) do
-			if vim.fn.executable(exe) == 1 then
-				return { exe, "-NoLogo" }
-			end
+		if vim.fn.executable("pwsh") == 1 then
+			return { "pwsh", "-NoLogo" }
+		end
+		-- Store-installed pwsh is an app execution alias that nvim refuses to spawn directly
+		if vim.uv.fs_lstat(vim.env.LOCALAPPDATA .. "\\Microsoft\\WindowsApps\\pwsh.exe") then
+			return { "cmd.exe", "/c", "pwsh", "-NoLogo" }
+		end
+		if vim.fn.executable("powershell") == 1 then
+			return { "powershell", "-NoLogo" }
 		end
 	end
 	return vim.o.shell
@@ -23,8 +28,17 @@ end
 
 local function set_term_keymaps(buf)
 	local o = { buffer = buf, silent = true, noremap = true }
-	vim.keymap.set("t", "<Esc>", "<Esc>", o)
-	vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", o)
+	-- first <Esc> goes to the shell immediately; a second one within 300ms leaves terminal mode
+	local last_esc = 0
+	vim.keymap.set("t", "<Esc>", function()
+		local now = vim.uv.hrtime()
+		if now - last_esc < 300e6 then
+			last_esc = 0
+			return "<C-\\><C-n>"
+		end
+		last_esc = now
+		return "<Esc>"
+	end, vim.tbl_extend("force", o, { expr = true }))
 	--[[ vim.keymap.set("t", "<C-h>", "<C-\\><C-n><C-w>h", o)
 	vim.keymap.set("t", "<C-j>", "<C-\\><C-n><C-w>j", o)
 	vim.keymap.set("t", "<C-k>", "<C-\\><C-n><C-w>k", o)
