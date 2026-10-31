@@ -1,29 +1,17 @@
 local vim = vim
 local headers = {}
 
-local function get_git_root(dir)
-	local git_dir = vim.fn.finddir(".git", dir .. ";")
-	if git_dir == "" then
-		return nil
-	end
-	local abs = vim.fn.fnamemodify(git_dir, ":p"):gsub("/$", "")
-	return vim.fn.fnamemodify(abs, ":h"):gsub("/$", "")
-end
-
+-- like starship: repo/path/in/repo/ inside a repo, ~/path/ outside
 local function get_display_path(dir)
-	local clean = dir:gsub("/$", "")
-	if clean == "" then
-		return "/"
-	end
-	local git_root = get_git_root(clean)
+	local clean = vim.fs.normalize(dir)
+	local git_root = vim.fs.root(clean, ".git")
 	if git_root then
 		local rel = clean:sub(#git_root + 2)
-		if rel == "" then
-			return vim.fn.fnamemodify(git_root, ":t") .. "/"
-		end
-		return rel .. "/"
+		local repo = vim.fs.basename(git_root)
+		return rel == "" and repo .. "/" or repo .. "/" .. rel .. "/"
 	end
-	return dir
+	local short = vim.fn.fnamemodify(clean, ":~"):gsub("\\", "/")
+	return short:match("/$") and short or short .. "/"
 end
 
 local function update_header(bufnr)

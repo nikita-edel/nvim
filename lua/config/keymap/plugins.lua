@@ -46,6 +46,22 @@ local function oil_set_filter(pattern)
 	require("oil.view").rerender_all_oil_buffers({ refetch = false })
 end
 
+local oil_show_size = false
+local function oil_toggle_size()
+	oil_show_size = not oil_show_size
+	require("oil").set_columns(oil_show_size and { "icon", "size" } or { "icon" })
+end
+
+-- tcd, then bring the shells along: the float terminal right away, the shell nvim was
+-- started from on exit (the nvim wrapper in the pwsh profile sets NVIM_CD_FILE)
+local function oil_cd()
+	local dir = require("oil").get_current_dir()
+	if not dir then return end
+	require("oil.actions").cd.callback({ scope = "tab" })
+	require("config.my_plugins.terminal").cd(dir)
+	if vim.env.NVIM_CD_FILE then vim.fn.writefile({ dir }, vim.env.NVIM_CD_FILE) end
+end
+
 map("n", "<leader>e", "<cmd>Oil<cr>", { desc = "Open Oil", noremap = true, silent = true })
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = "oil",
@@ -62,7 +78,9 @@ vim.api.nvim_create_autocmd("FileType", {
 
 		omap("n", "-", actions.parent.callback, "Oil: Parent directory")
 
-		omap("n", "~", function() actions.cd.callback({ scope = "tab" }) end, "Oil: tcd to current directory")
+		omap("n", "~", oil_cd, "Oil: cd nvim and shells to current directory")
+
+		omap("n", "gs", oil_toggle_size, "Oil: Toggle file sizes")
 
 		omap("n", "q", actions.close.callback, "Oil: Close")
 
