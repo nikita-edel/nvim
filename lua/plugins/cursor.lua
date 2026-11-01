@@ -1,5 +1,6 @@
 return {
 	"sphamba/smear-cursor.nvim",
+	cond = vim.fn.has("win32") == 0,
 	opts = {
 		smear_between_buffers = true,
 		smear_between_neighbor_lines = true,

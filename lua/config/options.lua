@@ -17,6 +17,9 @@ opt.splitright = true
 opt.fixendofline = true
 vim.g.editorconfig = true
 
+vim.o.ignorecase = true
+vim.o.smartcase = true
+
 opt.autoindent = true
 
 vim.diagnostic.config({

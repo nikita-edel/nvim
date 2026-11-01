@@ -1,5 +1,14 @@
+-- always forward slashes: git reports C:/x, buffer names and getcwd() may say C:\x
 local function abs(path)
-	return vim.fn.fnamemodify(path, ":p"):gsub("[/\\]+$", "")
+	return (vim.fs.normalize(vim.fn.fnamemodify(path, ":p"), { expand_env = false }):gsub("/+$", ""))
+end
+
+local function is_under(path, root)
+	local prefix = path:sub(1, #root + 1)
+	if vim.fn.has("win32") == 1 then
+		return prefix:lower() == root:lower() .. "/"
+	end
+	return prefix == root .. "/"
 end
 
 local function git_root(dir)
@@ -7,11 +16,8 @@ local function git_root(dir)
 	if vim.v.shell_error == 0 and result[1] and result[1] ~= "" then
 		return abs(result[1])
 	end
-	return abs(vim.fn.getcwd())
-end
-
-local function is_under(path, root)
-	return path:sub(1, #root + 1) == root .. "/"
+	local cwd = abs(vim.fn.getcwd())
+	return (dir == cwd or is_under(dir, cwd)) and cwd or dir
 end
 
 local function guard_name(rel_path)
