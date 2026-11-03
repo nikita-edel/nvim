@@ -16,7 +16,10 @@ return {
 					runtime = { version = "LuaJIT" },
 					workspace = {
 						checkThirdParty = false,
-						library = vim.api.nvim_get_runtime_file("", true),
+						library = vim.list_extend(
+							vim.api.nvim_get_runtime_file("", true),
+							vim.fn.isdirectory("/usr/share/hypr/stubs") == 1 and { "/usr/share/hypr/stubs" } or {}
+						),
 					},
 					diagnostics = { globals = { "vim" } },
 					telemetry = { enable = false },
