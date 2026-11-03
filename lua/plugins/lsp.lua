@@ -26,9 +26,11 @@ return {
 				},
 			},
 		})
+
 		-- Store-installed pwsh is an app execution alias: executable() is 0 for it, also for its full path, but
 		-- starting it by full path works. lspconfig and vim.lsp check executable() for a cmd list, so cmd is a
 		-- function that starts the server itself.
+
 		local pses = vim.fn.stdpath("data") .. "/mason/packages/powershell-editor-services"
 		local pwsh_alias = vim.env.LOCALAPPDATA .. "\\Microsoft\\WindowsApps\\pwsh.exe"
 		local shell = vim.fn.executable("pwsh") == 1 and "pwsh"
@@ -40,10 +42,15 @@ return {
 			shell = shell,
 			cmd = function(dispatchers)
 				return vim.lsp.rpc.start({
-					shell, "-NoLogo", "-NoProfile", "-Command",
-					("& '%s/PowerShellEditorServices/Start-EditorServices.ps1' -LogPath '%s/powershell_es.log'"
+					shell,
+					"-NoLogo",
+					"-NoProfile",
+					"-Command",
+					(
+						"& '%s/PowerShellEditorServices/Start-EditorServices.ps1' -LogPath '%s/powershell_es.log'"
 						.. " -SessionDetailsPath '%s/powershell_es.session.json' -FeatureFlags @() -AdditionalModules @()"
-						.. " -HostName nvim -HostProfileId 0 -HostVersion 1.0.0 -Stdio -LogLevel Information"):format(pses, cache, cache),
+						.. " -HostName nvim -HostProfileId 0 -HostVersion 1.0.0 -Stdio -LogLevel Information"
+					):format(pses, cache, cache),
 				}, dispatchers)
 			end,
 			-- rename is gated behind a disclaimer prompt; declining it disables rename for the session
