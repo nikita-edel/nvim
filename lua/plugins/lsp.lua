@@ -32,10 +32,11 @@ return {
 		-- function that starts the server itself.
 
 		local pses = vim.fn.stdpath("data") .. "/mason/packages/powershell-editor-services"
-		local pwsh_alias = vim.env.LOCALAPPDATA .. "\\Microsoft\\WindowsApps\\pwsh.exe"
-		local shell = vim.fn.executable("pwsh") == 1 and "pwsh"
-			or (vim.uv.fs_lstat(pwsh_alias) and pwsh_alias)
-			or "powershell.exe"
+		local shell = "pwsh"
+		if vim.fn.has("win32") == 1 and vim.fn.executable("pwsh") == 0 then
+			local alias = vim.env.LOCALAPPDATA and (vim.env.LOCALAPPDATA .. "\\Microsoft\\WindowsApps\\pwsh.exe")
+			shell = (alias and vim.uv.fs_lstat(alias)) and alias or "powershell.exe"
+		end
 		local cache = vim.fn.stdpath("cache")
 		vim.lsp.config("powershell_es", {
 			bundle_path = pses,
