@@ -131,7 +131,7 @@ function M.remove()
 end
 
 vim.api.nvim_create_user_command("Guards", function(opts)
-	M.add(opts.args, opts.range > 0)
+	M.add(opts.args ~= "" and opts.args or "include", opts.range > 0)
 end, { nargs = "?", range = true })
 
 vim.api.nvim_create_user_command("GuardsRm", function()
@@ -139,7 +139,7 @@ vim.api.nvim_create_user_command("GuardsRm", function()
 end, {})
 
 vim.api.nvim_create_user_command("GuardsRp", function(opts)
-	if M.remove() then M.add(opts.args, opts.range > 0) end
+	if M.remove() then M.add(opts.args ~= "" and opts.args or "include", opts.range > 0) end
 end, { nargs = "?", range = true })
 
 return M

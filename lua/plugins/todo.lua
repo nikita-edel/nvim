@@ -8,14 +8,14 @@ return {
 			FIX = {
 				icon = " ",
 				color = "error",
-				alt = { "FIXME", "BUG", "FIXIT", "ISSUE" },
+				alt = { "FIXME", "BUG", "FIXIT", "ISSUE", "bug" },
 			},
-			TODO = { icon = " ", color = "info" },
+			TODO = { icon = " ", color = "info", alt = { "todo" } },
 			HACK = { icon = " ", color = "warning" },
-			WARN = { icon = " ", color = "warning", alt = { "WARNING", "XXX" } },
+			WARN = { icon = " ", color = "warning", alt = { "WARNING", "XXX", "warning", "attention", "deprecated" } },
 			PERF = { icon = " ", alt = { "OPTIM", "PERFORMANCE", "OPTIMIZE" } },
-			NOTE = { icon = " ", color = "hint", alt = { "INFO" } },
-			TEST = { icon = "⏲ ", color = "test", alt = { "TESTING", "PASSED", "FAILED" } },
+			NOTE = { icon = " ", color = "hint", alt = { "INFO", "note", "remark", "remarks" } },
+			TEST = { icon = "⏲ ", color = "test", alt = { "TESTING", "PASSED", "FAILED", "test" } },
 		},
 		highlight = {
 			multiline = true,
@@ -24,7 +24,10 @@ return {
 			before = "",
 			keyword = "wide",
 			after = "fg",
-			pattern = [[.*<(KEYWORDS)\s*:]],
+			pattern = {
+				[[.*<(KEYWORDS)\s*:]], -- TODO: style
+				[[.*[@\\]<(KEYWORDS)>]], -- @todo / \todo (doxygen) style
+			},
 			comments_only = true,
 			max_line_len = 400,
 			exclude = {},
@@ -46,7 +49,7 @@ return {
 				"--line-number",
 				"--column",
 			},
-			pattern = [[\b(KEYWORDS):]],
+			pattern = [[(\b(KEYWORDS):|[@\\](KEYWORDS)\b)]],
 		},
 	},
 }
