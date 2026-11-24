@@ -173,5 +173,13 @@ map("n", "<leader>c", function()
 		end
 	end
 	if vim.api.nvim_buf_is_valid(next) then vim.cmd("buffer " .. next) end
-	vim.cmd("bdelete " .. cur)
+	local ok = pcall(vim.cmd, "bdelete " .. cur)
+	if not ok and vim.bo[cur].modified then
+		local choice = vim.fn.confirm("Buffer modified. Discard changes?", "&Yes\n&No", 2)
+		if choice == 1 then
+			vim.cmd("bdelete! " .. cur)
+		else
+			vim.cmd("buffer " .. cur)
+		end
+	end
 end, { desc = "Close buffer", noremap = true, silent = true })
